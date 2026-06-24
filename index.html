@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ziri International Trading – منظومة اللوجستيك الدولية</title>
+<style>
+/* ==================== DESIGN TOKENS ==================== */
+:root {
+  --sky-50:  #f0f8ff;
+  --sky-100: #dbeeff;
+  --sky-200: #b8dcff;
+  --sky-400: #60b0f8;
+  --sky-500: #3a96f0;
+  --sky-600: #1a7de0;
+  --sky-700: #0f64c0;
+  --navy:    #07254a;
+  --navy-mid:#0e3a6e;
+  --white:   #ffffff;
+  --slate50: #f8fafc;
+  --slate100:#f0f4f8;
+  --slate200:#e2eaf3;
+  --slate400:#8ea9c8;
+  --slate600:#475569;
+  --slate800:#1e293b;
+  --green:   #10b981;
+  --green-bg:#d1fae5;
+  --amber:   #f59e0b;
+  --amber-bg:#fef3c7;
+  --red:     #ef4444;
+  --red-bg:  #fee2e2;
+  --purple:  #7c3aed;
+  --purple-bg:#ede9fe;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --shadow-card: 0 2px 12px rgba(10,50,100,.07);
+  --shadow-float: 0 8px 28px rgba(10,50,100,.14);
+  --transition: all .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ==================== RESET / BASE ==================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: linear-gradient(160deg, #e8f4ff 0%, #f4f8ff 50%, #eef6ff 100%);
+  min-height: 100vh;
+  color: var(--slate800);
+}
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--sky-50); }
+::-webkit-scrollbar-thumb { background: var(--sky-400); border-radius: 99px; }
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeSlideDown {
+  from { opacity:0; transform:translateY(-16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeSlideUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(58,150,240,.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(58,150,240,0); }
+  100% { box-shadow: 0 0 0 0 rgba(58,150,240,0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes countUp {
+  from { opacity:0; transform:scale(.8); }
+  to   { opacity:1; transform:scale(1); }
+}
+@keyframes floatPlane {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes waveBar {
+  0%,100% { height: 8px; }
+  50%      { height: 22px; }
+}
+@keyframes rowIn {
+  from { opacity:0; transform:translateX(20px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* ==================== LAYOUT ==================== */
+.container { max-width: 1560px; margin: 0 auto; padding: 20px 18px; }
+
+/* ==================== HEADER ==================== */
+header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 55%, var(--sky-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: 22px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-float);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeSlideDown .5s ease;
+}
+header::before {
+  content:'';
+  position:absolute; top:-60px; left:-60px;
+  width:220px; height:220px;
+  background: radial-gradient(circle, rgba(255,255,255,.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+header::after {
+  content:'';
+  position:absolute; bottom:-40px; right:200px;
+  width:160px; height:160px;
+  background: radial-gradient(circle, rgba(58,150,240,.15) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.header-left { display:flex; align-items:center; gap:18px; }
+
+.logo-wrap {
+  width:62px; height:62px;
+  background: white;
+  border-radius: var(--radius-md);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.2);
+  overflow:hidden;
+  flex-shrink:0;
+  animation: pulseRing 3s infinite;
+}
+.logo-wrap img { width:100%; height:100%; object-fit:contain; }
+.logo-placeholder {
+  width:100%; height:100%;
+  background: linear-gradient(135deg, var(--sky-500), var(--sky-700));
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px;
+}
+
+.brand h1 { font-size:21px; font-weight:900; color:#fff; letter-spacing:.5px; }
+.brand p  { font-size:12px; color:rgba(255,255,255,.72); margin-top:2px; }
+.brand .live-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(16,185,129,.22); border:1px solid rgba(16,185,129,.5);
+  color:#6ee7b7; font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:99px; margin-top:4px;
+}
+.live-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:#10b981;
+  animation: pulseRing 1.4s infinite;
+}
+
+.header-plane {
+  font-size:42px; animation: floatPlane 3s ease-in-out infinite;
+  opacity:.85;
+}
+
+.header-right { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.header-time {
+  color:rgba(255,255,255,.8); font-size:13px;
+  background:rgba(255,255,255,.1); padding:6px 14px;
+  border-radius:99px; font-weight:600;
+}
+
+/* ==================== STATS ==================== */
+.stats-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap:14px;
+  margin-bottom:24px;
+}
+.stat-card {
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  border-top:4px solid var(--sky-500);
+  box-shadow:var(--shadow-card);
+  display:flex; align-items:center; gap:14px;
+  transition:var(--transition);
+  animation: fadeSlideUp .5s ease both;
+  position:relative; overflow:hidden;
+  cursor:default;
+}
+.stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-float); }
+.stat-card::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, var(--sky-400), var(--sky-200), var(--sky-400));
+  background-size:200% 100%;
+  animation:shimmer 2.5s linear infinite;
+}
+.stat-icon { font-size:28px; flex-shrink:0; }
+.stat-info h3 { font-size:11px; color:var(--slate600); font-weight:600; margin-bottom:3px; }
+.stat-info p  { font-size:22px; font-weight:900; color:var(--navy); animation:countUp .6s ease; }
+
+/* ==================== SECTION CARDS ==================== */
+.section-card {
+  background:var(--white);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-card);
+  margin-bottom:22px;
+  overflow:hidden;
+  animation: fadeSlideUp .5s ease .1s both;
+}
+.section-header {
+  padding:18px 24px 16px;
+  display:flex; align-items:center; gap:10px;
+  border-bottom:2px solid var(--sky-50);
+}
+.section-header .flag { font-size:22px; }
+.section-header h2 { font-size:15px; font-weight:800; color:var(--navy); }
+.section-header .badge-count {
+  margin-right:auto;
+  background:var(--sky-100); color:var(--sky-700);
+  font-size:11px; font-weight:800;
+  padding:2px 10px; border-radius:99px;
+}
+.section-body { padding:22px 24px; }
+
+/* ==================== FORM ==================== */
+.form-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(175px,1fr));
+  gap:14px;
+  margin-bottom:16px;
+}
+.fgroup { display:flex; flex-direction:column; gap:5px; }
+.fgroup label { font-size:12px; font-weight:700; color:var(--slate600); }
+.fgroup input, .fgroup select {
+  padding:10px 12px;
+  border:1.5px solid var(--slate200);
+  border-radius:var(--radius-md);
+  font-size:13.5px;
+  background:var(--slate50);
+  outline:none;
+  transition:var(--transition);
+  color:var(--slate800);
+}
+.fgroup input:focus, .fgroup select:focus {
+  border-color:var(--sky-500);
+  background:white;
+  box-shadow:0 0 0 3px rgba(58,150,240,.12);
+}
+.fgroup input::placeholder { color:var(--slate400); }
+
+/* ==================== BUTTONS ==================== */
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:10px 20px; border:none; border-radius:var(--radius-md);
+  font-size:13.5px; font-weight:700; cursor:pointer;
+  transition:var(--transition);
+  outline:none;
+}
+.btn-primary { background:linear-gradient(135deg,var(--sky-500),var(--sky-700)); color:white; }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(26,125,224,.35); }
+.btn-success { background:linear-gradient(135deg,#10b981,#059669); color:white; }
+.btn-success:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(16,185,129,.35); }
+.btn-sm { padding:6px 12px; font-size:12px; }
+.btn-ghost { background:var(--slate200); color:var(--slate600); }
+.btn-ghost:hover { background:var(--slate100); }
+.btn-danger { background:linear-gradient(135deg,#ef4444,#dc2626); color:white; }
+.btn-print { background:rgba(255,255,255,.18); color:white; border:1px solid rgba(255,255,255,.3); }
+.btn-print:hover { background:rgba(255,255,255,.28); }
+.btn:active { transform:scale(.97); }
+
+/* ==================== SEARCH BAR ==================== */
+.search-bar {
+  display:flex; gap:10px; align-items:center;
+  background:var(--sky-50);
+  border:1.5px solid var(--sky-200);
+  border-radius:var(--radius-lg);
+  padding:10px 16px;
+  margin-bottom:16px;
+}
+.search-bar span { font-size:14px; }
+.search-bar input {
+  flex:1; border:none; background:transparent;
+  font-size:13.5px; outline:none; color:var(--slate800);
+}
+.search-bar input::placeholder { color:var(--slate400); }
+.filter-btns { display:flex; gap:6px; flex-wrap:wrap; }
+.filter-btn {
+  padding:5px 12px; border-radius:99px; font-size:11px; font-weight:700;
+  border:1.5px solid var(--slate200); background:white; cursor:pointer;
+  transition:var(--transition);
+}
+.filter-btn.active, .filter-btn:hover {
+  background:var(--sky-500); color:white; border-color:var(--sky-500);
+}
+
+/* ==================== TABLE ==================== */
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; text-align:right; }
+thead tr { background:var(--sky-50); }
+th {
+  padding:12px 14px;
+  color:var(--navy);
+  font-weight:800;
+  font-size:12px;
+  white-space:nowrap;
+  border-bottom:2px solid var(--sky-200);
+}
+td {
+  padding:13px 14px;
+  border-bottom:1px solid var(--slate100);
+  vertical-align:middle;
+  transition:background .15s;
+}
+tbody tr { transition:var(--transition); }
+tbody tr:hover { background:var(--sky-50); }
+tbody tr.new-row { animation: rowIn .4s ease; }
+.client-name { font-weight:700; color:var(--navy); }
+.client-phone { font-size:11px; color:var(--slate600); margin-top:2px; }
+
+/* ==================== PILLS & TAGS ==================== */
+.tag { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:var(--radius-sm); font-size:11px; font-weight:800; }
+.tag-fedex { background:#dbeafe; color:#1d4ed8; }
+.tag-ups   { background:var(--amber-bg); color:#b45309; }
+.tag-ems   { background:var(--green-bg); color:#065f46; }
+.tag-other { background:var(--purple-bg); color:var(--purple); }
+
+.status-pill { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:99px; font-size:11px; font-weight:700; white-space:nowrap; }
+.s-transit  { background:var(--amber-bg); color:#b45309; }
+.s-received { background:var(--green-bg); color:#065f46; }
+.s-custom   { background:var(--purple-bg); color:var(--purple); }
+
+.wt-pill { display:inline-block; background:var(--sky-100); color:var(--sky-700); padding:4px 10px; border-radius:var(--radius-sm); font-weight:800; font-size:13px; }
+
+/* ==================== COST CALCULATOR ==================== */
+.calc-section { margin-top:0; }
+.calc-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+  gap:14px; margin-bottom:16px;
+}
+.calc-result {
+  background:linear-gradient(135deg, var(--navy) 0%, var(--sky-700) 100%);
+  border-radius:var(--radius-lg);
+  padding:20px 24px;
+  color:white;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap;
+  margin-top:4px;
+  box-shadow:var(--shadow-float);
+  transition:var(--transition);
+}
+.calc-result .res-label { font-size:13px; opacity:.8; font-weight:600; }
+.calc-result .res-val   { font-size:26px; font-weight:900; }
+.calc-result .res-block { text-align:center; }
+.calc-divider { width:1px; height:44px; background:rgba(255,255,255,.2); }
+
+.price-presets { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.preset-btn {
+  padding:6px 14px; border-radius:99px; font-size:12px; font-weight:700;
+  border:1.5px solid var(--sky-200); background:var(--sky-50); cursor:pointer;
+  color:var(--sky-700); transition:var(--transition);
+}
+.preset-btn:hover, .preset-btn.selected { background:var(--sky-500); color:white; border-color:var(--sky-500); }
+
+/* ==================== MODAL ==================== */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(7,37,74,.55); backdrop-filter:blur(4px);
+  z-index:900; align-items:center; justify-content:center;
+  padding:20px;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:white; border-radius:var(--radius-xl);
+  width:100%; max-width:480px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation:fadeSlideUp .3s ease;
+  overflow:hidden;
+}
+.modal-head {
+  background:linear-gradient(135deg,var(--navy),var(--sky-700));
+  padding:20px 24px; color:white;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-head h3 { font-size:16px; font-weight:800; }
+.modal-close {
+  background:rgba(255,255,255,.2); border:none; color:white;
+  width:30px; height:30px; border-radius:50%; cursor:pointer;
+  font-size:16px; display:flex; align-items:center; justify-content:center;
+  transition:var(--transition);
+}
+.modal-close:hover { background:rgba(255,255,255,.35); }
+.modal-body { padding:24px; display:flex; flex-direction:column; gap:14px; }
+.modal-foot { padding:16px 24px; border-top:1px solid var(--slate200); display:flex; gap:10px; justify-content:flex-end; }
+
+/* ==================== TOAST ==================== */
+.toast-container {
+  position:fixed; bottom:24px; left:24px;
+  display:flex; flex-direction:column; gap:8px;
+  z-index:9999;
+}
+.toast {
+  background:white; border-radius:var(--radius-md);
+  padding:12px 18px;
+  box-shadow:var(--shadow-float);
+  font-size:13px; font-weight:600;
+  display:flex; align-items:center; gap:8px;
+  animation:fadeSlideUp .3s ease;
+  border-right:4px solid var(--green);
+  max-width:300px;
+}
+.toast.error { border-right-color:var(--red); }
+
+/* ==================== LOADING BAR ==================== */
+.loading-bar {
+  position:fixed; top:0; left:0; right:0; height:3px; z-index:9999;
+  background:linear-gradient(90deg,var(--sky-500),var(--sky-200),var(--sky-500));
+  background-size:200% 100%;
+  animation:shimmer 1s linear infinite;
+  transition:opacity .4s;
+}
+
+/* ==================== WAVE ANIMATION ==================== */
+.wave-bars {
+  display:inline-flex; align-items:center; gap:2px; height:22px;
+}
+.wave-bar {
+  width:3px; background:var(--sky-400); border-radius:2px;
+  animation:waveBar .8s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay:.15s; }
+.wave-bar:nth-child(3) { animation-delay:.30s; }
+.wave-bar:nth-child(4) { animation-delay:.45s; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty-row td { text-align:center; padding:40px; color:var(--slate400); font-size:13px; }
+
+/* ==================== PRINT ==================== */
+@media print {
+  header, .section-card:first-of-type, .search-bar,
+  .filter-btns, .btn, .overlay, .toast-container { display:none !important; }
+  body { background:white; }
+  .section-card { box-shadow:none; border:1px solid #ccc; }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width:768px) {
+  header { flex-direction:column; text-align:center; }
+  .header-right { justify-content:center; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .form-grid  { grid-template-columns:1fr; }
+  .calc-grid  { grid-template-columns:1fr; }
+  .section-body { padding:16px; }
+  .brand h1 { font-size:17px; }
+  .header-plane { display:none; }
+}
+@media (max-width:480px) {
+  .stats-grid { grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading bar -->
+<div class="loading-bar" id="loading-bar" style="opacity:0"></div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toasts"></div>
+
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="header-left">
+    <div class="logo-wrap">
+      <img src="Logo.jpg" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <div class="logo-placeholder" style="display:none">✈️</div>
+    </div>
+    <div class="brand">
+      <h1>ZIRI INTERNATIONAL TRADING</h1>
+      <p>منظومة إدارة اللوجستيك الدولية – الصين ↔ الجزائر</p>
+      <span class="live-badge"><span class="live-dot"></span> نظام حي متصل</span>
+    </div>
+  </div>
+
+  <div class="header-plane">✈️</div>
+
+  <div class="header-right">
+    <div class="header-time" id="live-clock">--:--:--</div>
+    <button class="btn btn-print" onclick="window.print()">🖨️ طباعة / PDF</button>
+    <button class="btn btn-print" onclick="exportCSV()">📊 تصدير CSV</button>
+  </div>
+</header>
+
+<!-- ==================== STATS ==================== -->
+<div class="stats-grid">
+  <div class="stat-card" style="border-top-color:#3a96f0" style="animation-delay:.05s">
+    <div class="stat-icon">📦</div>
+    <div class="stat-info">
+      <h3>إجمالي الطرود المُرسلة</h3>
+      <p id="s-sent">0</p>
+    </div>
+  </div>
+  <div class="stat-card" style="border-top-color:#10b981; animation-delay:.1s">
+    <div class="stat-icon">✅</div>
+    <div class="stat-info">
+      <h3>مستلمة في الجزائر</h3>
+      <p id="s-received">0</p>
+    </div>
+  </div>
+  <div class="stat-card" style="border-top-color:#f59e0b; animation-delay:.15s">
+    <div class="stat-icon">✈️</div>
+    <div class="stat-info">
+      <h3>قيد الشحن الآن</h3>
+      <p id="s-transit">0</p>
+    </div>
+  </div>
+  <div class="stat-card" style="border-top-color:#7c3aed; animation-delay:.2s">
+    <div class="stat-icon">⚖️</div>
+    <div class="stat-info">
+      <h3>الوزن الصافي (كغ)</h3>
+      <p id="s-net">0.00</p>
+    </div>
+  </div>
+  <div class="stat-card" style="border-top-color:#0e3a6e; animation-delay:.25s">
+    <div class="stat-icon">📋</div>
+    <div class="stat-info">
+      <h3>وزن الفوترة Round (كغ)</h3>
+      <p id="s-round">0.00</p>
+    </div>
+  </div>
+  <div class="stat-card" style="border-top-color:#ef4444; animation-delay:.3s">
+    <div class="stat-icon">💰</div>
+    <div class="stat-info">
+      <h3>إجمالي تكلفة الشحن (دج)</h3>
+      <p id="s-cost">0.00</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHINA OFFICE ==================== -->
+<div class="section-card">
+  <div class="section-header">
+    <span class="flag">🇨🇳</span>
+    <h2>مكتب الصين — تسجيل وإرسال الشحنات</h2>
+    <span class="wave-bars"><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span></span>
+  </div>
+  <div class="section-body">
+    <form id="china-form" onsubmit="return addShipment(event)">
+      <div class="form-grid">
+        <div class="fgroup">
+          <label>👤 اسم الزبون الكامل</label>
+          <input type="text" id="c-name" placeholder="مثال: يوسف العلمي" required>
+        </div>
+        <div class="fgroup">
+          <label>📞 رقم الهاتف</label>
+          <input type="text" id="c-phone" placeholder="مثال: 0550112233" required>
+        </div>
+        <div class="fgroup">
+          <label>📅 تاريخ الشحن</label>
+          <input type="date" id="c-date" required>
+        </div>
+        <div class="fgroup">
+          <label>📦 رقم الكرتون (CTN)</label>
+          <input type="number" id="c-ctn" placeholder="1" min="1" required>
+        </div>
+        <div class="fgroup">
+          <label>🚚 الشركة الناقلة</label>
+          <select id="c-service" required>
+            <option value="FEDEX">FEDEX</option>
+            <option value="UPS">UPS</option>
+            <option value="EMS">EMS</option>
+            <option value="DHL">DHL</option>
+            <option value="OTHER">أخرى</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label>🔢 رقم التتبع (Tracking)</label>
+          <input type="text" id="c-tracking" placeholder="أدخل رقم البيلسان" required>
+        </div>
+        <div class="fgroup">
+          <label>📝 ملاحظات (اختياري)</label>
+          <input type="text" id="c-notes" placeholder="أي تفاصيل إضافية...">
+        </div>
+        <div class="fgroup">
+          <label>🏷️ نوع البضاعة</label>
+          <select id="c-goodstype">
+            <option value="عام">بضاعة عامة</option>
+            <option value="إلكترونيات">إلكترونيات</option>
+            <option value="ملابس">ملابس وأقمشة</option>
+            <option value="مواد بناء">مواد بناء</option>
+            <option value="أجهزة">أجهزة ومعدات</option>
+            <option value="غذاء">مواد غذائية</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">📦 تسجيل الشحنة وإضافتها للسجل</button>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== COST CALCULATOR ==================== -->
+<div class="section-card">
+  <div class="section-header">
+    <span class="flag">💰</span>
+    <h2>حاسبة تكلفة الشحن الاحترافية</h2>
+  </div>
+  <div class="section-body calc-section">
+    <p style="font-size:12px; color:var(--slate600); margin-bottom:12px;">اختر سعر الكيلو حسب نوع البضاعة أو أدخله يدوياً</p>
+    <div class="price-presets">
+      <button class="preset-btn" onclick="setPrice(800,'عام')">🎁 بضاعة عامة – 800 دج/كغ</button>
+      <button class="preset-btn" onclick="setPrice(1200,'إلكترونيات')">💻 إلكترونيات – 1200 دج/كغ</button>
+      <button class="preset-btn" onclick="setPrice(650,'ملابس')">👗 ملابس – 650 دج/كغ</button>
+      <button class="preset-btn" onclick="setPrice(500,'مواد بناء')">🏗️ مواد بناء – 500 دج/كغ</button>
+      <button class="preset-btn" onclick="setPrice(1000,'أجهزة')">⚙️ أجهزة – 1000 دج/كغ</button>
+      <button class="preset-btn" onclick="setPrice(750,'غذاء')">🥫 غذائية – 750 دج/كغ</button>
+    </div>
+    <div class="calc-grid">
+      <div class="fgroup">
+        <label>⚖️ الوزن للفوترة (كغ)</label>
+        <input type="number" id="calc-weight" step="0.01" placeholder="مثال: 45.5" oninput="recalcCost()">
+      </div>
+      <div class="fgroup">
+        <label>💵 سعر الكيلو الواحد (دج)</label>
+        <input type="number" id="calc-price" step="0.01" placeholder="مثال: 800" oninput="recalcCost()">
+      </div>
+      <div class="fgroup">
+        <label>➕ تكاليف إضافية (دج)</label>
+        <input type="number" id="calc-extra" step="0.01" placeholder="مثال: 500" value="0" oninput="recalcCost()">
+      </div>
+      <div class="fgroup">
+        <label>🏷️ نوع البضاعة المختار</label>
+        <input type="text" id="calc-goodstype" placeholder="سيتحدد تلقائياً" readonly style="background:#f0f4f8; color:var(--slate600)">
+      </div>
+    </div>
+    <div class="calc-result" id="calc-result">
+      <div class="res-block">
+        <div class="res-label">الوزن × السعر</div>
+        <div class="res-val" id="r-base">0 دج</div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="res-block">
+        <div class="res-label">تكاليف إضافية</div>
+        <div class="res-val" id="r-extra">0 دج</div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="res-block">
+        <div class="res-label">💰 التكلفة الإجمالية</div>
+        <div class="res-val" id="r-total" style="font-size:30px; color:#7dd3fc">0 دج</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ALGERIA / MAIN TABLE ==================== -->
+<div class="section-card">
+  <div class="section-header">
+    <span class="flag">🇩🇿</span>
+    <h2>السجل المركزي الموحد – متابعة الشحنات</h2>
+    <span class="badge-count" id="total-badge">0 طرد</span>
+  </div>
+  <div class="section-body">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="search-input" placeholder="ابحث باسم الزبون، الهاتف، رقم التتبع..." oninput="filterTable()">
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('all',this)">الكل</button>
+        <button class="filter-btn" onclick="setFilter('transit',this)">✈️ قيد الشحن</button>
+        <button class="filter-btn" onclick="setFilter('received',this)">✅ مستلمة</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="main-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>معلومات الزبون</th>
+            <th>تاريخ الإرسال</th>
+            <th>CTN</th>
+            <th>الناقل</th>
+            <th>رقم التتبع</th>
+            <th>نوع البضاعة</th>
+            <th>تاريخ الاستلام (الجزائر)</th>
+            <th>وزن صافي (كغ)</th>
+            <th>فوترة Round (كغ)</th>
+            <th>تكلفة (دج)</th>
+            <th>الوضعية</th>
+            <th>ملاحظات</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr class="empty-row"><td colspan="14">📭 لا توجد شحنات بعد. أضف شحنتك الأولى من مكتب الصين أعلاه.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ==================== ALGERIA RECEIVE MODAL ==================== -->
+<div class="overlay" id="receive-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🇩🇿 تأكيد الاستلام بالجزائر</h3>
+      <button class="modal-close" onclick="closeModal('receive-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="modal-row-id">
+      <div class="fgroup">
+        <label>📅 تاريخ ووقت الاستلام الفعلي</label>
+        <input type="datetime-local" id="dz-arrival">
+      </div>
+      <div class="fgroup">
+        <label>⚖️ الوزن الصافي الحقيقي (كغ)</label>
+        <input type="number" step="0.01" id="dz-net" placeholder="مثال: 15.45">
+      </div>
+      <div class="fgroup">
+        <label>💵 سعر الكيلو (دج)</label>
+        <input type="number" id="dz-price" placeholder="مثال: 800" oninput="updateModalCost()">
+      </div>
+      <div class="fgroup">
+        <label>➕ تكاليف إضافية (دج)</label>
+        <input type="number" id="dz-extra" placeholder="0" value="0" oninput="updateModalCost()">
+      </div>
+      <div style="background:var(--sky-50); border-radius:var(--radius-md); padding:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <span style="font-size:13px; color:var(--slate600);">التكلفة المحسوبة:</span>
+        <span id="modal-cost-display" style="font-size:20px; font-weight:900; color:var(--navy)">0 دج</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('receive-overlay')">إلغاء</button>
+      <button class="btn btn-success" onclick="saveReceive()">✓ تأكيد الاستلام والحفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EDIT MODAL ==================== -->
+<div class="overlay" id="edit-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✏️ تعديل بيانات الشحنة</h3>
+      <button class="modal-close" onclick="closeModal('edit-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-row-id">
+      <div class="fgroup">
+        <label>👤 اسم الزبون</label>
+        <input type="text" id="edit-name">
+      </div>
+      <div class="fgroup">
+        <label>📞 الهاتف</label>
+        <input type="text" id="edit-phone">
+      </div>
+      <div class="fgroup">
+        <label>🔢 رقم التتبع</label>
+        <input type="text" id="edit-tracking">
+      </div>
+      <div class="fgroup">
+        <label>📝 ملاحظات</label>
+        <input type="text" id="edit-notes">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('edit-overlay')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveEdit()">💾 حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ZIRI INTERNATIONAL TRADING – Full System JS
+   ========================================================= */
+
+// ---- Data Store ----
+let shipments = JSON.parse(localStorage.getItem('ziri_shipments') || '[]');
+let activeFilter = 'all';
+let editingId = null;
+
+// ---- Init ----
+document.addEventListener('DOMContentLoaded', () => {
+  const d = new Date();
+  document.getElementById('c-date').value = d.toISOString().slice(0,10);
+  document.getElementById('dz-arrival').value = d.toISOString().slice(0,16);
+  startClock();
+  renderTable();
+  recalcStats();
+});
+
+// ---- Live Clock ----
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('live-clock').textContent =
+      now.toLocaleTimeString('ar-DZ', { hour12:false }) + '  ' +
+      now.toLocaleDateString('ar-DZ');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ---- Save Data ----
+function save() {
+  localStorage.setItem('ziri_shipments', JSON.stringify(shipments));
+}
+
+// ---- Add Shipment (China) ----
+function addShipment(e) {
+  e.preventDefault();
+  showLoading();
+  const s = {
+    id: 'SH-' + Date.now(),
+    name: document.getElementById('c-name').value.trim(),
+    phone: document.getElementById('c-phone').value.trim(),
+    date: document.getElementById('c-date').value,
+    ctn: document.getElementById('c-ctn').value,
+    service: document.getElementById('c-service').value,
+    tracking: document.getElementById('c-tracking').value.trim(),
+    goodsType: document.getElementById('c-goodstype').value,
+    notes: document.getElementById('c-notes').value.trim(),
+    arrival: '', netWeight: null, roundWeight: null, cost: null, pricePerKg: null,
+    status: 'transit', createdAt: new Date().toISOString()
+  };
+  shipments.unshift(s);
+  save();
+  document.getElementById('china-form').reset();
+  document.getElementById('c-date').value = new Date().toISOString().slice(0,10);
+  renderTable();
+  recalcStats();
+  hideLoading();
+  toast('✅ تم تسجيل الشحنة بنجاح!', 'success');
+  return false;
+}
+
+// ---- Render Table ----
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  let data = shipments;
+
+  const q = document.getElementById('search-input').value.toLowerCase();
+  if(q) data = data.filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.phone.includes(q) ||
+    s.tracking.toLowerCase().includes(q)
+  );
+  if(activeFilter === 'transit')  data = data.filter(s => s.status === 'transit');
+  if(activeFilter === 'received') data = data.filter(s => s.status === 'received');
+
+  document.getElementById('total-badge').textContent = shipments.length + ' طرود';
+
+  if(!data.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="14">📭 لا توجد نتائج</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map((s, i) => {
+    const svcClass = {FEDEX:'tag-fedex',UPS:'tag-ups',EMS:'tag-ems'}[s.service] || 'tag-other';
+    const statusHtml = s.status === 'received'
+      ? `<span class="status-pill s-received">✅ مستلم بالجزائر</span>`
+      : `<span class="status-pill s-transit">✈️ قيد الشحن</span>`;
+    const costStr = s.cost !== null ? Number(s.cost).toLocaleString('fr-DZ') + ' دج' : '--';
+    const dzBtn = s.status === 'transit'
+      ? `<button class="btn btn-success btn-sm" onclick="openReceive('${s.id}')">🛬 استلام</button>`
+      : `<span style="color:var(--green);font-weight:800;font-size:12px;">✓ مكتمل</span>`;
+
+    return `<tr id="row-${s.id}" class="${i===0?'new-row':''}">
+      <td style="color:var(--slate400);font-size:11px;font-weight:700">${shipments.indexOf(shipments.find(x=>x.id===s.id))+1}</td>
+      <td>
+        <div class="client-name">${esc(s.name)}</div>
+        <div class="client-phone">${esc(s.phone)}</div>
+      </td>
+      <td>${s.date}</td>
+      <td style="font-weight:700">${s.ctn}</td>
+      <td><span class="tag ${svcClass}">${s.service}</span></td>
+      <td style="font-family:monospace;font-size:12px">${esc(s.tracking)}</td>
+      <td><span style="font-size:11px;color:var(--slate600)">${esc(s.goodsType||'')}</span></td>
+      <td>${s.arrival || '<span style="color:var(--slate400)">--</span>'}</td>
+      <td>${s.netWeight!==null ? s.netWeight.toFixed(2)+' كغ' : '<span style="color:var(--slate400)">--</span>'}</td>
+      <td>${s.roundWeight!==null ? `<span class="wt-pill">${s.roundWeight} كغ</span>` : '<span style="color:var(--slate400)">--</span>'}</td>
+      <td style="font-weight:700;color:var(--navy)">${costStr}</td>
+      <td>${statusHtml}</td>
+      <td style="font-size:11px;color:var(--slate600);max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.notes||'')}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${dzBtn}
+          <button class="btn btn-ghost btn-sm" onclick="openEdit('${s.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteShipment('${s.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ---- Recalc Stats ----
+function recalcStats() {
+  const all = shipments;
+  const received = all.filter(s => s.status === 'received');
+  const transit  = all.filter(s => s.status === 'transit');
+  const totalNet   = received.reduce((a,s) => a + (s.netWeight||0), 0);
+  const totalRound = received.reduce((a,s) => a + (s.roundWeight||0), 0);
+  const totalCost  = all.reduce((a,s) => a + (s.cost||0), 0);
+
+  document.getElementById('s-sent').textContent     = all.length + ' طرود';
+  document.getElementById('s-received').textContent = received.length + ' طرود';
+  document.getElementById('s-transit').textContent  = transit.length + ' طرود';
+  document.getElementById('s-net').textContent      = totalNet.toFixed(2) + ' كغ';
+  document.getElementById('s-round').textContent    = totalRound.toFixed(2) + ' كغ';
+  document.getElementById('s-cost').textContent     = totalCost.toLocaleString('fr-DZ') + ' دج';
+}
+
+// ---- Open Receive Modal ----
+function openReceive(id) {
+  document.getElementById('modal-row-id').value = id;
+  document.getElementById('dz-net').value = '';
+  document.getElementById('dz-price').value = '';
+  document.getElementById('dz-extra').value = '0';
+  document.getElementById('modal-cost-display').textContent = '0 دج';
+  document.getElementById('dz-arrival').value = new Date().toISOString().slice(0,16);
+  openModal('receive-overlay');
+}
+
+function updateModalCost() {
+  const w = parseFloat(document.getElementById('dz-net').value) || 0;
+  const p = parseFloat(document.getElementById('dz-price').value) || 0;
+  const e = parseFloat(document.getElementById('dz-extra').value) || 0;
+  const round = Math.ceil(w);
+  const total = round * p + e;
+  document.getElementById('modal-cost-display').textContent = total.toLocaleString('fr-DZ') + ' دج';
+}
+
+function saveReceive() {
+  const id = document.getElementById('modal-row-id').value;
+  const arrival = document.getElementById('dz-arrival').value.replace('T',' ');
+  const net = parseFloat(document.getElementById('dz-net').value);
+  const price = parseFloat(document.getElementById('dz-price').value) || 0;
+  const extra = parseFloat(document.getElementById('dz-extra').value) || 0;
+
+  if(!arrival || isNaN(net) || net <= 0) { toast('⚠️ يرجى ملء الحقول المطلوبة بشكل صحيح!','error'); return; }
+
+  const round = Math.ceil(net);
+  const cost  = round * price + extra;
+
+  const s = shipments.find(x => x.id === id);
+  if(s) {
+    s.arrival = arrival; s.netWeight = net;
+    s.roundWeight = round; s.cost = cost;
+    s.pricePerKg = price; s.status = 'received';
+  }
+  save();
+  renderTable(); recalcStats();
+  closeModal('receive-overlay');
+  toast('✅ تم تأكيد الاستلام وحفظ البيانات!','success');
+}
+
+// ---- Edit Modal ----
+function openEdit(id) {
+  const s = shipments.find(x => x.id === id);
+  if(!s) return;
+  editingId = id;
+  document.getElementById('edit-row-id').value = id;
+  document.getElementById('edit-name').value = s.name;
+  document.getElementById('edit-phone').value = s.phone;
+  document.getElementById('edit-tracking').value = s.tracking;
+  document.getElementById('edit-notes').value = s.notes||'';
+  openModal('edit-overlay');
+}
+
+function saveEdit() {
+  const s = shipments.find(x => x.id === editingId);
+  if(!s) return;
+  s.name     = document.getElementById('edit-name').value.trim();
+  s.phone    = document.getElementById('edit-phone').value.trim();
+  s.tracking = document.getElementById('edit-tracking').value.trim();
+  s.notes    = document.getElementById('edit-notes').value.trim();
+  save();
+  renderTable(); recalcStats();
+  closeModal('edit-overlay');
+  toast('✏️ تم تعديل البيانات بنجاح!','success');
+}
+
+// ---- Delete ----
+function deleteShipment(id) {
+  if(!confirm('هل أنت متأكد من حذف هذه الشحنة؟')) return;
+  shipments = shipments.filter(x => x.id !== id);
+  save(); renderTable(); recalcStats();
+  toast('🗑️ تم حذف الشحنة','error');
+}
+
+// ---- Calculator ----
+function setPrice(price, label) {
+  document.getElementById('calc-price').value = price;
+  document.getElementById('calc-goodstype').value = label;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+  recalcCost();
+}
+function recalcCost() {
+  const w = parseFloat(document.getElementById('calc-weight').value) || 0;
+  const p = parseFloat(document.getElementById('calc-price').value) || 0;
+  const e = parseFloat(document.getElementById('calc-extra').value) || 0;
+  const base = w * p;
+  const total = base + e;
+  document.getElementById('r-base').textContent  = base.toLocaleString('fr-DZ') + ' دج';
+  document.getElementById('r-extra').textContent = e.toLocaleString('fr-DZ') + ' دج';
+  document.getElementById('r-total').textContent = total.toLocaleString('fr-DZ') + ' دج';
+}
+
+// ---- Filter & Search ----
+function filterTable() { renderTable(); }
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+// ---- CSV Export ----
+function exportCSV() {
+  const headers = ['ID','الاسم','الهاتف','التاريخ','CTN','الناقل','التتبع','نوع البضاعة','وصول الجزائر','وزن صافي','وزن فوترة','تكلفة','الوضعية','ملاحظات'];
+  const rows = shipments.map(s => [
+    s.id, s.name, s.phone, s.date, s.ctn, s.service, s.tracking,
+    s.goodsType, s.arrival, s.netWeight||'', s.roundWeight||'', s.cost||'',
+    s.status === 'received' ? 'مستلم' : 'قيد الشحن', s.notes
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ziri_international_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  toast('📊 تم تصدير البيانات بنجاح!','success');
+}
+
+// ---- Modal helpers ----
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target === ov) ov.classList.remove('open'); }));
+
+// ---- Toast ----
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = 'toast' + (type==='error'?' error':'');
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+// ---- Loading Bar ----
+function showLoading() {
+  const lb = document.getElementById('loading-bar');
+  lb.style.opacity = '1';
+  lb.style.width = '70%';
+}
+function hideLoading() {
+  const lb = document.getElementById('loading-bar');
+  lb.style.width = '100%';
+  setTimeout(() => { lb.style.opacity='0'; lb.style.width='0'; }, 300);
+}
+
+// ---- Escape HTML ----
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
