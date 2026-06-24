@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ziri International Trading – منظومة اللوجستيك الدولية</title>
+<title>Ziri International Trading – منصة تسيير شركة ziri_international_</title>
 <style>
 /* ==================== DESIGN TOKENS ==================== */
 :root {
@@ -467,15 +467,12 @@ tbody tr.new-row { animation: rowIn .4s ease; }
 </head>
 <body>
 
-<!-- Loading bar -->
 <div class="loading-bar" id="loading-bar" style="opacity:0"></div>
 
-<!-- Toast container -->
 <div class="toast-container" id="toasts"></div>
 
 <div class="container">
 
-<!-- ==================== HEADER ==================== -->
 <header>
   <div class="header-left">
     <div class="logo-wrap">
@@ -498,9 +495,8 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </header>
 
-<!-- ==================== STATS ==================== -->
 <div class="stats-grid">
-  <div class="stat-card" style="border-top-color:#3a96f0" style="animation-delay:.05s">
+  <div class="stat-card" style="border-top-color:#3a96f0; animation-delay:.05s">
     <div class="stat-icon">📦</div>
     <div class="stat-info">
       <h3>إجمالي الطرود المُرسلة</h3>
@@ -544,7 +540,6 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-<!-- ==================== CHINA OFFICE ==================== -->
 <div class="section-card">
   <div class="section-header">
     <span class="flag">🇨🇳</span>
@@ -605,7 +600,6 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-<!-- ==================== COST CALCULATOR ==================== -->
 <div class="section-card">
   <div class="section-header">
     <span class="flag">💰</span>
@@ -658,7 +652,6 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-<!-- ==================== ALGERIA / MAIN TABLE ==================== -->
 <div class="section-card">
   <div class="section-header">
     <span class="flag">🇩🇿</span>
@@ -704,10 +697,7 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-</div><!-- /container -->
-
-<!-- ==================== ALGERIA RECEIVE MODAL ==================== -->
-<div class="overlay" id="receive-overlay">
+</div><div class="overlay" id="receive-overlay">
   <div class="modal">
     <div class="modal-head">
       <h3>🇩🇿 تأكيد الاستلام بالجزائر</h3>
@@ -743,7 +733,6 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-<!-- ==================== EDIT MODAL ==================== -->
 <div class="overlay" id="edit-overlay">
   <div class="modal">
     <div class="modal-head">
@@ -776,300 +765,341 @@ tbody tr.new-row { animation: rowIn .4s ease; }
   </div>
 </div>
 
-<script>
-/* =========================================================
-   ZIRI INTERNATIONAL TRADING – Full System JS
-   ========================================================= */
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ---- Data Store ----
-let shipments = JSON.parse(localStorage.getItem('ziri_shipments') || '[]');
-let activeFilter = 'all';
-let editingId = null;
+  // إعدادات المزامنة المستخرجة من حسابك الجديد تماماً
+  const firebaseConfig = {
+    apiKey: "AIzaSyBurMSnkS9dk0iJaotj6UU2pvnC9efGzSQ",
+    authDomain: "tour-expert-6c580.firebaseapp.com",
+    databaseURL: "https://tour-expert-6c580-default-rtdb.firebaseio.com",
+    projectId: "tour-expert-6c580",
+    storageBucket: "tour-expert-6c580.firebasestorage.app",
+    messagingSenderId: "233731555338",
+    appId: "1:233731555338:web:d7s0seb885838d3ee35ff3",
+    measurementId: "G-BZEWMG1VR3"
+  };
 
-// ---- Init ----
-document.addEventListener('DOMContentLoaded', () => {
+  // تهيئة اتصال قاعدة البيانات
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  // استعمال مجلد منفصل لضمان عدم حدوث أي تداخل مع موقعك الآخر
+  const shipmentsRef = collection(db, "shipments");
+
+  let shipments = [];
+  let activeFilter = 'all';
+  let editingId = null;
+
+  // الاستماع المباشر والحي للتغيرات بين السيرفر والمكتبين فوراً
+  const q = query(shipmentsRef, orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    shipments = [];
+    snapshot.forEach((doc) => {
+      shipments.push({ id: doc.id, ...doc.data() });
+    });
+    renderTable();
+    recalcStats();
+  });
+
+  // التحكم في التوقيت والتهيئة الأساسية عند فتح الصفحة
+  function startClock() {
+    function tick() {
+      const now = new Date();
+      document.getElementById('live-clock').textContent =
+        now.toLocaleTimeString('ar-DZ', { hour12:false }) + '  ' +
+        now.toLocaleDateString('ar-DZ');
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+  startClock();
+
   const d = new Date();
   document.getElementById('c-date').value = d.toISOString().slice(0,10);
   document.getElementById('dz-arrival').value = d.toISOString().slice(0,16);
-  startClock();
-  renderTable();
-  recalcStats();
-});
 
-// ---- Live Clock ----
-function startClock() {
-  function tick() {
-    const now = new Date();
-    document.getElementById('live-clock').textContent =
-      now.toLocaleTimeString('ar-DZ', { hour12:false }) + '  ' +
-      now.toLocaleDateString('ar-DZ');
-  }
-  tick();
-  setInterval(tick, 1000);
-}
+  // تسجيل شحنة جديدة وإرسالها للسيرفر (مكتب الصين)
+  window.addShipment = async function(e) {
+    e.preventDefault();
+    showLoading();
+    
+    const s = {
+      name: document.getElementById('c-name').value.trim(),
+      phone: document.getElementById('c-phone').value.trim(),
+      date: document.getElementById('c-date').value,
+      ctn: document.getElementById('c-ctn').value,
+      service: document.getElementById('c-service').value,
+      tracking: document.getElementById('c-tracking').value.trim(),
+      goodsType: document.getElementById('c-goodstype').value,
+      notes: document.getElementById('c-notes').value.trim(),
+      arrival: '', netWeight: null, roundWeight: null, cost: null, pricePerKg: null,
+      status: 'transit', 
+      createdAt: new Date().toISOString()
+    };
 
-// ---- Save Data ----
-function save() {
-  localStorage.setItem('ziri_shipments', JSON.stringify(shipments));
-}
-
-// ---- Add Shipment (China) ----
-function addShipment(e) {
-  e.preventDefault();
-  showLoading();
-  const s = {
-    id: 'SH-' + Date.now(),
-    name: document.getElementById('c-name').value.trim(),
-    phone: document.getElementById('c-phone').value.trim(),
-    date: document.getElementById('c-date').value,
-    ctn: document.getElementById('c-ctn').value,
-    service: document.getElementById('c-service').value,
-    tracking: document.getElementById('c-tracking').value.trim(),
-    goodsType: document.getElementById('c-goodstype').value,
-    notes: document.getElementById('c-notes').value.trim(),
-    arrival: '', netWeight: null, roundWeight: null, cost: null, pricePerKg: null,
-    status: 'transit', createdAt: new Date().toISOString()
-  };
-  shipments.unshift(s);
-  save();
-  document.getElementById('china-form').reset();
-  document.getElementById('c-date').value = new Date().toISOString().slice(0,10);
-  renderTable();
-  recalcStats();
-  hideLoading();
-  toast('✅ تم تسجيل الشحنة بنجاح!', 'success');
-  return false;
-}
-
-// ---- Render Table ----
-function renderTable() {
-  const tbody = document.getElementById('table-body');
-  let data = shipments;
-
-  const q = document.getElementById('search-input').value.toLowerCase();
-  if(q) data = data.filter(s =>
-    s.name.toLowerCase().includes(q) ||
-    s.phone.includes(q) ||
-    s.tracking.toLowerCase().includes(q)
-  );
-  if(activeFilter === 'transit')  data = data.filter(s => s.status === 'transit');
-  if(activeFilter === 'received') data = data.filter(s => s.status === 'received');
-
-  document.getElementById('total-badge').textContent = shipments.length + ' طرود';
-
-  if(!data.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="14">📭 لا توجد نتائج</td></tr>`;
-    return;
+    try {
+      await addDoc(shipmentsRef, s);
+      document.getElementById('china-form').reset();
+      document.getElementById('c-date').value = new Date().toISOString().slice(0,10);
+      toast('✅ تم تسجيل الشحنة بنجاح على السيرفر المركزي!', 'success');
+    } catch (error) {
+      console.error(error);
+      toast('❌ حدث خطأ غير متوقع أثناء الاتصال بالسيرفر', 'error');
+    } finally {
+      hideLoading();
+    }
+    return false;
   }
 
-  tbody.innerHTML = data.map((s, i) => {
-    const svcClass = {FEDEX:'tag-fedex',UPS:'tag-ups',EMS:'tag-ems'}[s.service] || 'tag-other';
-    const statusHtml = s.status === 'received'
-      ? `<span class="status-pill s-received">✅ مستلم بالجزائر</span>`
-      : `<span class="status-pill s-transit">✈️ قيد الشحن</span>`;
-    const costStr = s.cost !== null ? Number(s.cost).toLocaleString('fr-DZ') + ' دج' : '--';
-    const dzBtn = s.status === 'transit'
-      ? `<button class="btn btn-success btn-sm" onclick="openReceive('${s.id}')">🛬 استلام</button>`
-      : `<span style="color:var(--green);font-weight:800;font-size:12px;">✓ مكتمل</span>`;
-
-    return `<tr id="row-${s.id}" class="${i===0?'new-row':''}">
-      <td style="color:var(--slate400);font-size:11px;font-weight:700">${shipments.indexOf(shipments.find(x=>x.id===s.id))+1}</td>
-      <td>
-        <div class="client-name">${esc(s.name)}</div>
-        <div class="client-phone">${esc(s.phone)}</div>
-      </td>
-      <td>${s.date}</td>
-      <td style="font-weight:700">${s.ctn}</td>
-      <td><span class="tag ${svcClass}">${s.service}</span></td>
-      <td style="font-family:monospace;font-size:12px">${esc(s.tracking)}</td>
-      <td><span style="font-size:11px;color:var(--slate600)">${esc(s.goodsType||'')}</span></td>
-      <td>${s.arrival || '<span style="color:var(--slate400)">--</span>'}</td>
-      <td>${s.netWeight!==null ? s.netWeight.toFixed(2)+' كغ' : '<span style="color:var(--slate400)">--</span>'}</td>
-      <td>${s.roundWeight!==null ? `<span class="wt-pill">${s.roundWeight} كغ</span>` : '<span style="color:var(--slate400)">--</span>'}</td>
-      <td style="font-weight:700;color:var(--navy)">${costStr}</td>
-      <td>${statusHtml}</td>
-      <td style="font-size:11px;color:var(--slate600);max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.notes||'')}</td>
-      <td>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          ${dzBtn}
-          <button class="btn btn-ghost btn-sm" onclick="openEdit('${s.id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteShipment('${s.id}')">🗑️</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-// ---- Recalc Stats ----
-function recalcStats() {
-  const all = shipments;
-  const received = all.filter(s => s.status === 'received');
-  const transit  = all.filter(s => s.status === 'transit');
-  const totalNet   = received.reduce((a,s) => a + (s.netWeight||0), 0);
-  const totalRound = received.reduce((a,s) => a + (s.roundWeight||0), 0);
-  const totalCost  = all.reduce((a,s) => a + (s.cost||0), 0);
-
-  document.getElementById('s-sent').textContent     = all.length + ' طرود';
-  document.getElementById('s-received').textContent = received.length + ' طرود';
-  document.getElementById('s-transit').textContent  = transit.length + ' طرود';
-  document.getElementById('s-net').textContent      = totalNet.toFixed(2) + ' كغ';
-  document.getElementById('s-round').textContent    = totalRound.toFixed(2) + ' كغ';
-  document.getElementById('s-cost').textContent     = totalCost.toLocaleString('fr-DZ') + ' دج';
-}
-
-// ---- Open Receive Modal ----
-function openReceive(id) {
-  document.getElementById('modal-row-id').value = id;
-  document.getElementById('dz-net').value = '';
-  document.getElementById('dz-price').value = '';
-  document.getElementById('dz-extra').value = '0';
-  document.getElementById('modal-cost-display').textContent = '0 دج';
-  document.getElementById('dz-arrival').value = new Date().toISOString().slice(0,16);
-  openModal('receive-overlay');
-}
-
-function updateModalCost() {
-  const w = parseFloat(document.getElementById('dz-net').value) || 0;
-  const p = parseFloat(document.getElementById('dz-price').value) || 0;
-  const e = parseFloat(document.getElementById('dz-extra').value) || 0;
-  const round = Math.ceil(w);
-  const total = round * p + e;
-  document.getElementById('modal-cost-display').textContent = total.toLocaleString('fr-DZ') + ' دج';
-}
-
-function saveReceive() {
-  const id = document.getElementById('modal-row-id').value;
-  const arrival = document.getElementById('dz-arrival').value.replace('T',' ');
-  const net = parseFloat(document.getElementById('dz-net').value);
-  const price = parseFloat(document.getElementById('dz-price').value) || 0;
-  const extra = parseFloat(document.getElementById('dz-extra').value) || 0;
-
-  if(!arrival || isNaN(net) || net <= 0) { toast('⚠️ يرجى ملء الحقول المطلوبة بشكل صحيح!','error'); return; }
-
-  const round = Math.ceil(net);
-  const cost  = round * price + extra;
-
-  const s = shipments.find(x => x.id === id);
-  if(s) {
-    s.arrival = arrival; s.netWeight = net;
-    s.roundWeight = round; s.cost = cost;
-    s.pricePerKg = price; s.status = 'received';
+  // معالجة ونوافذ الاستلام (مكتب الجزائر)
+  window.openReceive = function(id) {
+    document.getElementById('modal-row-id').value = id;
+    document.getElementById('dz-net').value = '';
+    document.getElementById('dz-price').value = '';
+    document.getElementById('dz-extra').value = '0';
+    document.getElementById('modal-cost-display').textContent = '0 دج';
+    document.getElementById('dz-arrival').value = new Date().toISOString().slice(0,16);
+    openModal('receive-overlay');
   }
-  save();
-  renderTable(); recalcStats();
-  closeModal('receive-overlay');
-  toast('✅ تم تأكيد الاستلام وحفظ البيانات!','success');
-}
 
-// ---- Edit Modal ----
-function openEdit(id) {
-  const s = shipments.find(x => x.id === id);
-  if(!s) return;
-  editingId = id;
-  document.getElementById('edit-row-id').value = id;
-  document.getElementById('edit-name').value = s.name;
-  document.getElementById('edit-phone').value = s.phone;
-  document.getElementById('edit-tracking').value = s.tracking;
-  document.getElementById('edit-notes').value = s.notes||'';
-  openModal('edit-overlay');
-}
+  window.updateModalCost = function() {
+    const w = parseFloat(document.getElementById('dz-net').value) || 0;
+    const p = parseFloat(document.getElementById('dz-price').value) || 0;
+    const e = parseFloat(document.getElementById('dz-extra').value) || 0;
+    const round = Math.ceil(w);
+    const total = round * p + e;
+    document.getElementById('modal-cost-display').textContent = total.toLocaleString('fr-DZ') + ' دج';
+  }
 
-function saveEdit() {
-  const s = shipments.find(x => x.id === editingId);
-  if(!s) return;
-  s.name     = document.getElementById('edit-name').value.trim();
-  s.phone    = document.getElementById('edit-phone').value.trim();
-  s.tracking = document.getElementById('edit-tracking').value.trim();
-  s.notes    = document.getElementById('edit-notes').value.trim();
-  save();
-  renderTable(); recalcStats();
-  closeModal('edit-overlay');
-  toast('✏️ تم تعديل البيانات بنجاح!','success');
-}
+  window.saveReceive = async function() {
+    const id = document.getElementById('modal-row-id').value;
+    const arrival = document.getElementById('dz-arrival').value.replace('T',' ');
+    const net = parseFloat(document.getElementById('dz-net').value);
+    const price = parseFloat(document.getElementById('dz-price').value) || 0;
+    const extra = parseFloat(document.getElementById('dz-extra').value) || 0;
 
-// ---- Delete ----
-function deleteShipment(id) {
-  if(!confirm('هل أنت متأكد من حذف هذه الشحنة؟')) return;
-  shipments = shipments.filter(x => x.id !== id);
-  save(); renderTable(); recalcStats();
-  toast('🗑️ تم حذف الشحنة','error');
-}
+    if(!arrival || isNaN(net) || net <= 0) { toast('⚠️ يرجى التأكد من صحة البيانات والأوزان الفوقية!','error'); return; }
 
-// ---- Calculator ----
-function setPrice(price, label) {
-  document.getElementById('calc-price').value = price;
-  document.getElementById('calc-goodstype').value = label;
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
-  event.target.classList.add('selected');
-  recalcCost();
-}
-function recalcCost() {
-  const w = parseFloat(document.getElementById('calc-weight').value) || 0;
-  const p = parseFloat(document.getElementById('calc-price').value) || 0;
-  const e = parseFloat(document.getElementById('calc-extra').value) || 0;
-  const base = w * p;
-  const total = base + e;
-  document.getElementById('r-base').textContent  = base.toLocaleString('fr-DZ') + ' دج';
-  document.getElementById('r-extra').textContent = e.toLocaleString('fr-DZ') + ' دج';
-  document.getElementById('r-total').textContent = total.toLocaleString('fr-DZ') + ' دج';
-}
+    const round = Math.ceil(net);
+    const cost  = round * price + extra;
 
-// ---- Filter & Search ----
-function filterTable() { renderTable(); }
-function setFilter(f, btn) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable();
-}
+    showLoading();
+    try {
+      const docRef = doc(db, "shipments", id);
+      await updateDoc(docRef, {
+        arrival: arrival, netWeight: net,
+        roundWeight: round, cost: cost,
+        pricePerKg: price, status: 'received'
+      });
+      closeModal('receive-overlay');
+      toast('✅ تم تحديث بيانات الاستلام الفعلي بنجاح!','success');
+    } catch (error) {
+      toast('❌ حدث خطأ أثناء المزامنة، يرجى المحاولة لاحقاً','error');
+    } finally {
+      hideLoading();
+    }
+  }
 
-// ---- CSV Export ----
-function exportCSV() {
-  const headers = ['ID','الاسم','الهاتف','التاريخ','CTN','الناقل','التتبع','نوع البضاعة','وصول الجزائر','وزن صافي','وزن فوترة','تكلفة','الوضعية','ملاحظات'];
-  const rows = shipments.map(s => [
-    s.id, s.name, s.phone, s.date, s.ctn, s.service, s.tracking,
-    s.goodsType, s.arrival, s.netWeight||'', s.roundWeight||'', s.cost||'',
-    s.status === 'received' ? 'مستلم' : 'قيد الشحن', s.notes
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'ziri_international_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-  toast('📊 تم تصدير البيانات بنجاح!','success');
-}
+  // نافذة تعديل بيانات الشحنة العامة
+  window.openEdit = function(id) {
+    const s = shipments.find(x => x.id === id);
+    if(!s) return;
+    editingId = id;
+    document.getElementById('edit-row-id').value = id;
+    document.getElementById('edit-name').value = s.name;
+    document.getElementById('edit-phone').value = s.phone;
+    document.getElementById('edit-tracking').value = s.tracking;
+    document.getElementById('edit-notes').value = s.notes||'';
+    openModal('edit-overlay');
+  }
 
-// ---- Modal helpers ----
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target === ov) ov.classList.remove('open'); }));
+  window.saveEdit = async function() {
+    showLoading();
+    try {
+      const docRef = doc(db, "shipments", editingId);
+      await updateDoc(docRef, {
+        name: document.getElementById('edit-name').value.trim(),
+        phone: document.getElementById('edit-phone').value.trim(),
+        tracking: document.getElementById('edit-tracking').value.trim(),
+        notes: document.getElementById('edit-notes').value.trim()
+      });
+      closeModal('edit-overlay');
+      toast('✏️ تم تعديل وتحديث بيانات الشحنة على السيرفر بنجاح!','success');
+    } catch (error) {
+      toast('❌ حدث خطأ أثناء محاولة تعديل السجل الموحد','error');
+    } finally {
+      hideLoading();
+    }
+  }
 
-// ---- Toast ----
-function toast(msg, type='success') {
-  const t = document.createElement('div');
-  t.className = 'toast' + (type==='error'?' error':'');
-  t.textContent = msg;
-  document.getElementById('toasts').appendChild(t);
-  setTimeout(() => t.remove(), 3200);
-}
+  // إزالة وسحب الشحنات نهائياً من قاعدة البيانات
+  window.deleteShipment = async function(id) {
+    if(!confirm('هل أنت متأكد من رغبتك بحذف هذه الشحنة نهائياً من سيرفرات السجل؟')) return;
+    showLoading();
+    try {
+      await deleteDoc(doc(db, "shipments", id));
+      toast('🗑️ تم إزالة وحذف الشحنة بنجاح من قاعدة البيانات','error');
+    } catch (error) {
+      toast('❌ عذراً، فشل حذف الشحنة من على السيرفر','error');
+    } finally {
+      hideLoading();
+    }
+  }
 
-// ---- Loading Bar ----
-function showLoading() {
-  const lb = document.getElementById('loading-bar');
-  lb.style.opacity = '1';
-  lb.style.width = '70%';
-}
-function hideLoading() {
-  const lb = document.getElementById('loading-bar');
-  lb.style.width = '100%';
-  setTimeout(() => { lb.style.opacity='0'; lb.style.width='0'; }, 300);
-}
+  // بناء وعرض محتويات الجدول المركزي الموحد بشكل مرن
+  window.renderTable = function() {
+    const tbody = document.getElementById('table-body');
+    let data = shipments;
 
-// ---- Escape HTML ----
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+    const qInput = document.getElementById('search-input').value.toLowerCase();
+    if(qInput) data = data.filter(s =>
+      s.name.toLowerCase().includes(qInput) ||
+      s.phone.includes(qInput) ||
+      s.tracking.toLowerCase().includes(qInput)
+    );
+    if(activeFilter === 'transit')  data = data.filter(s => s.status === 'transit');
+    if(activeFilter === 'received') data = data.filter(s => s.status === 'received');
+
+    document.getElementById('total-badge').textContent = shipments.length + ' طرود';
+
+    if(!data.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="14">📭 لا توجد نتائج مطابقة لعمليات البحث الحالية</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((s, i) => {
+      const svcClass = {FEDEX:'tag-fedex',UPS:'tag-ups',EMS:'tag-ems'}[s.service] || 'tag-other';
+      const statusHtml = s.status === 'received'
+        ? `<span class="status-pill s-received">✅ مستلم بالجزائر</span>`
+        : `<span class="status-pill s-transit">✈️ قيد الشحن</span>`;
+      const costStr = s.cost !== null ? Number(s.cost).toLocaleString('fr-DZ') + ' دج' : '--';
+      const dzBtn = s.status === 'transit'
+        ? `<button class="btn btn-success btn-sm" onclick="openReceive('${s.id}')">🛬 استلام</button>`
+        : `<span style="color:var(--green);font-weight:800;font-size:12px;">✓ مكتمل</span>`;
+
+      return `<tr>
+        <td style="color:var(--slate400);font-size:11px;font-weight:700">${i+1}</td>
+        <td>
+          <div class="client-name">${esc(s.name)}</div>
+          <div class="client-phone">${esc(s.phone)}</div>
+        </td>
+        <td>${s.date}</td>
+        <td style="font-weight:700">${s.ctn}</td>
+        <td><span class="tag ${svcClass}">${s.service}</span></td>
+        <td style="font-family:monospace;font-size:12px">${esc(s.tracking)}</td>
+        <td><span style="font-size:11px;color:var(--slate600)">${esc(s.goodsType||'')}</span></td>
+        <td>${s.arrival || '<span style="color:var(--slate400)">--</span>'}</td>
+        <td>${s.netWeight!==null ? s.netWeight.toFixed(2)+' كغ' : '<span style="color:var(--slate400)">--</span>'}</td>
+        <td>${s.roundWeight!==null ? `<span class="wt-pill">${s.roundWeight} كغ</span>` : '<span style="color:var(--slate400)">--</span>'}</td>
+        <td style="font-weight:700;color:var(--navy)">${costStr}</td>
+        <td>${statusHtml}</td>
+        <td style="font-size:11px;color:var(--slate600);max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.notes||'')}</td>
+        <td>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            ${dzBtn}
+            <button class="btn btn-ghost btn-sm" onclick="openEdit('${s.id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteShipment('${s.id}')">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // حساب تحديث شاشات الإحصائيات المركزية تلقائياً وبأرقام حية
+  window.recalcStats = function() {
+    const all = shipments;
+    const received = all.filter(s => s.status === 'received');
+    const transit  = all.filter(s => s.status === 'transit');
+    const totalNet   = received.reduce((a,s) => a + (s.netWeight||0), 0);
+    const totalRound = received.reduce((a,s) => a + (s.roundWeight||0), 0);
+    const totalCost  = all.reduce((a,s) => a + (s.cost||0), 0);
+
+    document.getElementById('s-sent').textContent     = all.length + ' طرود';
+    document.getElementById('s-received').textContent = received.length + ' طرود';
+    document.getElementById('s-transit').textContent  = transit.length + ' طرود';
+    document.getElementById('s-net').textContent      = totalNet.toFixed(2) + ' كغ';
+    document.getElementById('s-round').textContent    = totalRound.toFixed(2) + ' كغ';
+    document.getElementById('s-cost').textContent     = totalCost.toLocaleString('fr-DZ') + ' دج';
+  }
+
+  // وظائف وإجراءات الآلة الحاسبة المستقلة
+  window.setPrice = function(price, label) {
+    document.getElementById('calc-price').value = price;
+    document.getElementById('calc-goodstype').value = label;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+    event.target.classList.add('selected');
+    recalcCost();
+  }
+
+  window.recalcCost = function() {
+    const w = parseFloat(document.getElementById('calc-weight').value) || 0;
+    const p = parseFloat(document.getElementById('calc-price').value) || 0;
+    const e = parseFloat(document.getElementById('calc-extra').value) || 0;
+    const base = w * p;
+    const total = base + e;
+    document.getElementById('r-base').textContent  = base.toLocaleString('fr-DZ') + ' دج';
+    document.getElementById('r-extra').textContent = e.toLocaleString('fr-DZ') + ' دج';
+    document.getElementById('r-total').textContent = total.toLocaleString('fr-DZ') + ' دج';
+  }
+
+  window.filterTable = function() { renderTable(); }
+  
+  window.setFilter = function(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  // تصدير ملفات التقارير وحفظها بصيغة ملفات اكسل CSV
+  window.exportCSV = function() {
+    const headers = ['ID','الاسم','الهاتف','التاريخ','CTN','الناقل','التتبع','نوع البضاعة','وصول الجزائر','وزن صافي','وزن فوترة','تكلفة','الوضعية','ملاحظات'];
+    const rows = shipments.map(s => [
+      s.id, s.name, s.phone, s.date, s.ctn, s.service, s.tracking,
+      s.goodsType, s.arrival, s.netWeight||'', s.roundWeight||'', s.cost||'',
+      s.status === 'received' ? 'مستلم' : 'قيد الشحن', s.notes
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ziri_international_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    toast('📊 تم تصدير البيانات بنجاح!','success');
+  }
+
+  // النوافذ ومؤشرات التفاعل البصري
+  window.openModal = function(id) { document.getElementById(id).classList.add('open'); }
+  window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); }
+  
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if(e.target === ov) ov.classList.remove('open'); });
+  });
+
+  window.toast = function(msg, type='success') {
+    const t = document.createElement('div');
+    t.className = 'toast' + (type==='error'?' error':'');
+    t.textContent = msg;
+    document.getElementById('toasts').appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  window.showLoading = function() {
+    const lb = document.getElementById('loading-bar');
+    lb.style.opacity = '1'; lb.style.width = '70%';
+  }
+  window.hideLoading = function() {
+    const lb = document.getElementById('loading-bar');
+    lb.style.width = '100%';
+    setTimeout(() => { lb.style.opacity='0'; lb.style.width='0'; }, 300);
+  }
+
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 </script>
 </body>
 </html>
