@@ -201,8 +201,8 @@ body {
 .btn-blue { background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: white; box-shadow: 0 4px 14px rgba(56,189,248,0.3); border: 1px solid rgba(255,255,255,0.1); }  
 .btn-blue:active { transform: scale(0.97); opacity: 0.9; }  
 
-.btn-secondary { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 16px; padding: 10px; font-size: 12px; font-weight: bold;}
-.btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+.btn-secondary { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 16px; padding: 10px; font-size: 12px; font-weight: bold;}  
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }  
 
 /* حاسبة التكلفة الفورية مدمجة التصميم المحدث */  
 .preset-box { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 14px; }  
@@ -219,9 +219,9 @@ body {
 .client-info-box { display: flex; flex-direction: column; gap: 4px; width: 100%; }  
 .client-title { font-weight: 800; font-size: 15px; color: #ffffff; }  
 
-/* زبائن متعددين داخل الكرت */
-.multi-clients-badge { font-size: 11px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 8px; border-radius: 6px; width: max-content; font-weight: bold; margin-bottom: 4px;}
-.client-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(11, 21, 40, 0.3); padding: 6px 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(255,255,255,0.05); }
+/* زبائن متعددين داخل الكرت */  
+.multi-clients-badge { font-size: 11px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 8px; border-radius: 6px; width: max-content; font-weight: bold; margin-bottom: 4px;}  
+.client-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(11, 21, 40, 0.3); padding: 6px 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(255,255,255,0.05); }  
 
 /* تصميم أنيق لرقم الهاتف مع ميزة الاتصال الفوري */  
 .client-phone-link {   
@@ -259,7 +259,7 @@ body {
 
 .det-row { display: flex; flex-direction: column; gap: 2px; }  
 .det-label { color: #cbd5e1; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px; }  
-.det-val { font-weight: 700; color: #ffffff; }  
+.det-val { font-weight: 700; color: #ffffff; word-break: break-all; }  
 
 .m-card-actions { display: flex; gap: 8px; margin-top: 4px; }  
 .sm-btn { flex: 1; padding: 10px; font-size: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px; transition: opacity 0.15s ease; }  
@@ -286,8 +286,14 @@ body {
 
 #search-input::placeholder { color: #94a3b8; }  
 
-.sub-client-box { border: 1px dashed rgba(56, 189, 248, 0.4); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px; background: rgba(11, 21, 40, 0.2); position: relative;}
-.remove-sub-btn { position: absolute; left: 10px; top: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 2px 6px; font-size: 10px; cursor: pointer;}
+.sub-client-box { border: 1px dashed rgba(56, 189, 248, 0.4); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px; background: rgba(11, 21, 40, 0.2); position: relative;}  
+.remove-sub-btn { position: absolute; left: 10px; top: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 2px 6px; font-size: 10px; cursor: pointer;}  
+
+/* نمط حقول التتبع المتعددة */
+.tracking-inputs-wrapper { display: flex; flex-direction: column; gap: 8px; background: rgba(0, 0, 0, 0.15); padding: 10px; border-radius: var(--radius-sm); border: 1px dashed rgba(56, 189, 248, 0.2); margin-top: 4px; }
+.tracking-item-input { display: flex; align-items: center; gap: 6px; }
+.tracking-item-input span { font-size: 11px; color: var(--accent-blue); font-weight: bold; min-width: 50px; }
+.tracking-item-input input { padding: 8px 12px; font-size: 13px; flex: 1; }
 </style>  
 </head>  
 <body>  
@@ -374,7 +380,8 @@ body {
             <button type="button" class="action-btn btn-secondary" onclick="addNewClientField()">➕ إضافة زبون آخر لهذه الشحنة (كرطونة مشتركة)</button>
 
             <div class="input-group"><label>📅 تاريخ الشحن</label><input type="date" id="c-date" required></div>  
-            <div class="input-group"><label>📦 عدد الكراتين (CTN)</label><input type="number" id="c-ctn" value="1" min="1" required></div>  
+            <div class="input-group"><label>📦 عدد الكراتين (CTN)</label><input type="number" id="c-ctn" value="1" min="1" oninput="generateTrackingInputs()" required></div>  
+            
             <div class="input-group">  
               <label>🚚 الشركة الناقلة</label>  
               <select id="c-service">  
@@ -382,7 +389,16 @@ body {
                 <option value="EMS">EMS</option><option value="DHL">DHL</option><option value="أخرى">أخرى</option>  
               </select>  
             </div>  
-            <div class="input-group"><label>🔢 رقم التتبع العالمي (Tracking)</label><input type="text" id="c-tracking" required></div>  
+            
+            <div class="input-group">
+              <label>🔢 أرقام التتبع لكل كرطونة (Tracking)</label>
+              <div id="tracking-inputs-container" class="tracking-inputs-wrapper">
+                <div class="tracking-item-input">
+                  <span>كرطونة 1:</span>
+                  <input type="text" class="c-tracking-field" placeholder="أدخل رقم التتبع..." required>
+                </div>
+              </div>
+            </div>
             
             <div class="input-group">  
               <label>🏷️ صنف البضاعة</label>  
@@ -462,6 +478,23 @@ body {
     document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('ar-DZ', { hour12: false });  
   }, 1000);  
   document.getElementById('c-date').value = new Date().toISOString().slice(0,10);  
+
+  // دالة توليد حقول التتبع ديناميكياً حسب عدد الكراتين المكتوب
+  window.generateTrackingInputs = function() {
+    const ctnCount = parseInt(document.getElementById('c-ctn').value) || 1;
+    const container = document.getElementById('tracking-inputs-container');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= ctnCount; i++) {
+      const div = document.createElement('div');
+      div.className = 'tracking-item-input';
+      div.innerHTML = `
+        <span>كرطونة ${i}:</span>
+        <input type="text" class="c-tracking-field" placeholder="رقم التتبع للكرطونة ${i}..." required>
+      `;
+      container.appendChild(div);
+    }
+  };
   
   window.addNewClientField = function() {
     const wrapper = document.getElementById('clients-wrapper');
@@ -494,12 +527,20 @@ body {
       });
     });
 
+    // جمع كل أرقام التتبع من الحقول المحدثة وتخزينها كمصفوفة
+    const trackingInputs = document.querySelectorAll('.c-tracking-field');
+    let trackingArray = [];
+    trackingInputs.forEach(input => {
+      if(input.value.trim()) trackingArray.push(input.value.trim());
+    });
+
     const data = {  
       clients: clientsArray,
       date: document.getElementById('c-date').value,  
       ctn: parseInt(document.getElementById('c-ctn').value) || 1,  
       service: document.getElementById('c-service').value,  
-      tracking: document.getElementById('c-tracking').value.trim(),  
+      trackings: trackingArray, // مصفوفة أرقام التتبع الجديدة لدعم التعددية
+      tracking: trackingArray[0] || '', // حماية وتوافق مع الهيكل القديم
       goodsType: document.getElementById('c-type').value.trim(),  
       status: 'transit', 
       arrival: '',
@@ -516,15 +557,14 @@ body {
       </div>
     `;
     document.getElementById('c-date').value = new Date().toISOString().slice(0,10);  
+    generateTrackingInputs(); // إعادة تعيين حقول التتبع إلى الحقل الافتراضي
     alert('🚀 تم إرسال وحفظ الطرد بنجاح في قاعدة البيانات!');  
   };  
   
-  // دالة القائمة مع حماية كاملة من البيانات القديمة لضمان الظهور الفوري
   window.renderMobileList = function() {  
     const container = document.getElementById('mobile-list-container');  
     const search = document.getElementById('search-input').value.toLowerCase();  
     
-    // إصلاح البيانات القديمة مؤقتاً أثناء القراءة حتى لا تسبب تعطل الشاشة
     let standardizedList = list.map(item => {
       if (!item.clients || !Array.isArray(item.clients)) {
         return {
@@ -545,10 +585,14 @@ body {
 
     let filtered = standardizedList;  
     if(search) {  
-      filtered = standardizedList.filter(x =>   
-        (x.tracking && x.tracking.toLowerCase().includes(search)) ||  
-        x.clients.some(c => (c.name && c.name.toLowerCase().includes(search)) || (c.phone && c.phone.includes(search)))
-      );  
+      filtered = standardizedList.filter(x => {
+        // فحص البحث في مصفوفة التتبع الجديدة أو في حقل التتبع القديم النصي
+        const matchTrackingNew = x.trackings && Array.isArray(x.trackings) && x.trackings.some(t => t.toLowerCase().includes(search));
+        const matchTrackingOld = x.tracking && x.tracking.toLowerCase().includes(search);
+        const matchClient = x.clients.some(c => (c.name && c.name.toLowerCase().includes(search)) || (c.phone && c.phone.includes(search)));
+        
+        return matchTrackingNew || matchTrackingOld || matchClient;
+      });
     }  
   
     if(!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:30px; font-size: 13px;">لا يوجد شحنات مطابقة للبحث حالياً</p>'; return; }  
@@ -577,6 +621,14 @@ body {
         `;
       });
 
+      // إعداد آلية العرض لأرقام التتبع بشكل مصفوفة منسقة أو نص عادي في حال البيانات القديمة
+      let trackingDisplay = '---';
+      if(s.trackings && Array.isArray(s.trackings) && s.trackings.length > 0) {
+        trackingDisplay = s.trackings.map((t, idx) => `ك${idx+1}: ${t}`).join('<br>');
+      } else if (s.tracking) {
+        trackingDisplay = s.tracking;
+      }
+
       return `  
         <div class="m-shipment-card">  
           <div class="m-card-top-info">  
@@ -586,7 +638,7 @@ body {
             <span class="pill ${isRec ? 'pill-received' : 'pill-transit'}">${isRec ? '✅ مستلم بالمقر' : '✈️ في الطريق'}</span>  
           </div>  
           <div class="m-card-details">  
-            <div class="det-row"><span class="det-label">رقم التتبع</span><span class="det-val" style="color:#38bdf8;">${s.tracking || '---'}</span></div>  
+            <div class="det-row"><span class="det-label">أرقام التتبع</span><span class="det-val" style="color:#38bdf8; font-size:11px; line-height:1.3;">${trackingDisplay}</span></div>  
             <div class="det-row"><span class="det-label">الشركة / النوع</span><span class="det-val">${s.service || 'أخرى'} (${s.goodsType || 'غير محدد'})</span></div>  
             <div class="det-row"><span class="det-label">إجمالي الفوترة</span><span class="det-val">${totalRoundWeight > 0 ? totalRoundWeight + ' كغ' : 'قيد القياس'}</span></div>  
             <div class="det-row"><span class="det-label">الحساب الكلي</span><span class="det-val" style="color:#34d399;">${totalCost > 0 ? totalCost.toLocaleString() + ' دج' : 'قيد الاحتساب'}</span></div>  
@@ -604,7 +656,6 @@ body {
     document.getElementById('modal-id').value = id;  
     const item = list.find(x => x.id === id);
     
-    // تأمين جلب قائمة الزبائن حتى للبيانات القديمة
     const itemClients = (item.clients && Array.isArray(item.clients)) ? item.clients : [{ name: item.name || 'زبون', phone: item.phone || '' }];
     const container = document.getElementById('modal-clients-weights-container');
     
