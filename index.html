@@ -201,6 +201,9 @@ body {
 .btn-blue { background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: white; box-shadow: 0 4px 14px rgba(56,189,248,0.3); border: 1px solid rgba(255,255,255,0.1); }  
 .btn-blue:active { transform: scale(0.97); opacity: 0.9; }  
 
+.btn-secondary { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 16px; padding: 10px; font-size: 12px; font-weight: bold;}
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+
 /* حاسبة التكلفة الفورية مدمجة التصميم المحدث */  
 .preset-box { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 14px; }  
 .p-btn { padding: 12px 6px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; border: 1px solid rgba(56,189,248,0.2); background: rgba(11, 21, 40, 0.3); color: #cbd5e1; cursor: pointer; transition: all 0.2s ease; }  
@@ -213,8 +216,12 @@ body {
   padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--premium-shadow);  
 }  
 .m-card-top-info { display: flex; justify-content: space-between; align-items: flex-start; }  
-.client-info-box { display: flex; flex-direction: column; gap: 2px; }  
+.client-info-box { display: flex; flex-direction: column; gap: 4px; width: 100%; }  
 .client-title { font-weight: 800; font-size: 15px; color: #ffffff; }  
+
+/* زبائن متعددين داخل الكرت */
+.multi-clients-badge { font-size: 11px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 8px; border-radius: 6px; width: max-content; font-weight: bold; margin-bottom: 4px;}
+.client-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(11, 21, 40, 0.3); padding: 6px 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(255,255,255,0.05); }
 
 /* تصميم أنيق لرقم الهاتف مع ميزة الاتصال الفوري */  
 .client-phone-link {   
@@ -258,8 +265,6 @@ body {
 .sm-btn { flex: 1; padding: 10px; font-size: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px; transition: opacity 0.15s ease; }  
 .sm-btn:active { opacity: 0.8; }  
 .sm-btn-green { background: #10b981; color: white; box-shadow: 0 3px 8px rgba(16,185,129,0.2); }  
-.sm-btn-print { background: #2563eb; color: white; box-shadow: 0 3px 8px rgba(37,99,235,0.2); }  
-.sm-btn-grey { background: rgba(255,255,255,0.08); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); }  
 .sm-btn-red { background: #ef4444; color: white; max-width: 46px; font-size: 14px; box-shadow: 0 3px 8px rgba(239,68,68,0.2); }  
 
 /* نافذة الاستلام المنبثقة الفخمة */  
@@ -281,31 +286,11 @@ body {
 
 #search-input::placeholder { color: #94a3b8; }  
 
-#print-area { display: none; }  
-@media print {  
-  body * { display: none !important; }  
-  #print-area { display: block !important; direction: rtl; font-family: sans-serif; padding: 20px; color: #000; background: #fff; }  
-  .p-h { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }  
-  .p-table { width: 100%; border-collapse: collapse; margin-top: 15px; }  
-  .p-table td { padding: 8px; border: 1px solid #ccc; color: #000; }  
-}  
+.sub-client-box { border: 1px dashed rgba(56, 189, 248, 0.4); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px; background: rgba(11, 21, 40, 0.2); position: relative;}
+.remove-sub-btn { position: absolute; left: 10px; top: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 2px 6px; font-size: 10px; cursor: pointer;}
 </style>  
 </head>  
 <body>  
-
-<div id="print-area">  
-  <div class="p-h">  
-    <h2>ZIRI International Trading</h2>  
-    <p>وصل تسليم الشحنة المفوترة الموثق</p>  
-  </div>  
-  <table class="p-table">  
-    <tr><td><b>الزبون:</b></td><td id="p-name"></td></tr>  
-    <tr><td><b>الهاتف:</b></td><td id="p-phone"></td></tr>  
-    <tr><td><b>رقم التتبع العالمي:</b></td><td id="p-track"></td></tr>  
-    <tr><td><b>الوزن الصافي المستلم:</b></td><td id="p-net"></td></tr>  
-    <tr><td><b>المبلغ الإجمالي المستحق للدفـع:</b></td><td id="p-total" style="font-size:18px; font-weight:bold;"></td></tr>  
-  </table>  
-</div>  
 
 <div class="container">    
   
@@ -378,8 +363,16 @@ body {
         <div class="section-title">🇨🇳 تسجيل شحنة جديدة (مكتب الصين)</div>  
         <div class="section-body">  
           <form id="china-form" onsubmit="saveNewShipment(event)">  
-            <div class="input-group"><label>👤 اسم الزبون</label><input type="text" id="c-name" required></div>  
-            <div class="input-group"><label>📞 رقم الهاتف</label><input type="text" id="c-phone" required></div>  
+            
+            <div id="clients-wrapper">
+              <div class="sub-client-box" style="border: none; padding: 0; background: none;">
+                <div class="input-group"><label>👤 اسم الزبون (الرئيسي)</label><input type="text" class="c-client-name" required></div>  
+                <div class="input-group"><label>📞 رقم الهاتف</label><input type="text" class="c-client-phone" required></div>  
+              </div>
+            </div>
+
+            <button type="button" class="action-btn btn-secondary" onclick="addNewClientField()">➕ إضافة زبون آخر لهذه الشحنة (كرطونة مشتركة)</button>
+
             <div class="input-group"><label>📅 تاريخ الشحن</label><input type="date" id="c-date" required></div>  
             <div class="input-group"><label>📦 عدد الكراتين (CTN)</label><input type="number" id="c-ctn" value="1" min="1" required></div>  
             <div class="input-group">  
@@ -432,12 +425,9 @@ body {
   <div class="sheet-content">  
     <div class="sheet-header"><span>🛬 تحديث بيانات استلام المقر بالجزائر</span><button class="close-sheet" onclick="closeSheet()">✕</button></div>  
     <input type="hidden" id="modal-id">  
-    <div class="input-group"><label>⚖️ الوزن الصافي الحقيقي (كغ)</label><input type="number" step="0.01" id="dz-net" oninput="calcModalTotal()"></div>  
-    <div class="input-group"><label>💵 السعر المتفق عليه للكيلو (دج)</label><input type="number" id="dz-price" oninput="calcModalTotal()"></div>  
-    <div class="input-group"><label>➕ تكاليف إضافية (جمركة / شحن داخلي)</label><input type="number" id="dz-extra" value="0" oninput="calcModalTotal()"></div>  
-    <div style="background:rgba(11, 21, 40, 0.5); padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-top:10px; border:1px solid rgba(56,189,248,0.2);">  
-      <b>الفاتورة النهائية:</b><span id="modal-total" style="color:#34d399; font-weight:800; font-size:16px;">0 دج</span>  
-    </div>  
+    
+    <div id="modal-clients-weights-container"></div>
+
     <button class="action-btn btn-blue" onclick="submitReceiveData()" style="margin-top:20px;">✓ تأكيد الاستلام واحتساب الحساب</button>  
   </div>  
 </div>  
@@ -446,7 +436,6 @@ body {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
   import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
   
-  // معطيات خادم Firebase المعتمد والخاص بتطبيقكم سحابياً  
   const firebaseConfig = {  
     apiKey: "AIzaSyBurMSnkS9dk0iJaotj6UU2pvnC9efGzSQ",  
     authDomain: "tour-expert-6c580.firebaseapp.com",  
@@ -462,7 +451,6 @@ body {
   const colRef = collection(db, "shipments");  
   let list = [];  
   
-  // جلب وتحديث سحابي فوري ومباشر مع قاعدة البيانات  
   onSnapshot(query(colRef, orderBy("createdAt", "desc")), (snap) => {  
     list = [];  
     snap.forEach(d => list.push({ id: d.id, ...d.data() }));  
@@ -470,106 +458,223 @@ body {
     updateStats();  
   });  
   
-  // تحديث الساعة التلقائية في الهيدر  
   setInterval(() => {  
     document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('ar-DZ', { hour12: false });  
   }, 1000);  
   document.getElementById('c-date').value = new Date().toISOString().slice(0,10);  
   
-  // دالة حفظ طرد جديد مرسل من مكتب الصين  
+  window.addNewClientField = function() {
+    const wrapper = document.getElementById('clients-wrapper');
+    const div = document.createElement('div');
+    div.className = 'sub-client-box';
+    div.innerHTML = `
+      <button type="button" class="remove-sub-btn" onclick="this.parentElement.remove()">حذف</button>
+      <div class="input-group"><label>👤 اسم الزبون الإضافي</label><input type="text" class="c-client-name" required></div>  
+      <div class="input-group"><label>📞 رقم الهاتف</label><input type="text" class="c-client-phone" required></div>  
+    `;
+    wrapper.appendChild(div);
+  };
+
   window.saveNewShipment = async function(e) {  
     e.preventDefault();  
+    
+    const nameInputs = document.querySelectorAll('.c-client-name');
+    const phoneInputs = document.querySelectorAll('.c-client-phone');
+    
+    let clientsArray = [];
+    nameInputs.forEach((input, index) => {
+      clientsArray.push({
+        name: input.value.trim(),
+        phone: phoneInputs[index].value.trim(),
+        netWeight: null,
+        roundWeight: null,
+        pricePerKg: 6000,
+        extraCost: 0,
+        cost: null
+      });
+    });
+
     const data = {  
-      name: document.getElementById('c-name').value.trim(),  
-      phone: document.getElementById('c-phone').value.trim(),  
+      clients: clientsArray,
       date: document.getElementById('c-date').value,  
       ctn: parseInt(document.getElementById('c-ctn').value) || 1,  
       service: document.getElementById('c-service').value,  
       tracking: document.getElementById('c-tracking').value.trim(),  
       goodsType: document.getElementById('c-type').value.trim(),  
-      status: 'transit', arrival: '', netWeight: null, roundWeight: null, cost: null, pricePerKg: null, extraCost: 0,  
+      status: 'transit', 
+      arrival: '',
       createdAt: new Date().toISOString()  
     };  
+    
     await addDoc(colRef, data);  
+    
     document.getElementById('china-form').reset();  
+    document.getElementById('clients-wrapper').innerHTML = `
+      <div class="sub-client-box" style="border: none; padding: 0; background: none;">
+        <div class="input-group"><label>👤 اسم الزبون (الرئيسي)</label><input type="text" class="c-client-name" required></div>  
+        <div class="input-group"><label>📞 رقم الهاتف</label><input type="text" class="c-client-phone" required></div>  
+      </div>
+    `;
     document.getElementById('c-date').value = new Date().toISOString().slice(0,10);  
     alert('🚀 تم إرسال وحفظ الطرد بنجاح في قاعدة البيانات!');  
   };  
   
-  // معالجة واجهة القائمة والاتصال الهاتفي وتعديلاتها الفاخرة  
+  // دالة القائمة مع حماية كاملة من البيانات القديمة لضمان الظهور الفوري
   window.renderMobileList = function() {  
     const container = document.getElementById('mobile-list-container');  
     const search = document.getElementById('search-input').value.toLowerCase();  
-    let filtered = list;  
+    
+    // إصلاح البيانات القديمة مؤقتاً أثناء القراءة حتى لا تسبب تعطل الشاشة
+    let standardizedList = list.map(item => {
+      if (!item.clients || !Array.isArray(item.clients)) {
+        return {
+          ...item,
+          clients: [{
+            name: item.name || 'زبون غير محدد',
+            phone: item.phone || '',
+            netWeight: item.netWeight || null,
+            roundWeight: item.roundWeight || null,
+            pricePerKg: item.pricePerKg || 6000,
+            extraCost: item.extraCost || 0,
+            cost: item.cost || null
+          }]
+        };
+      }
+      return item;
+    });
+
+    let filtered = standardizedList;  
     if(search) {  
-      filtered = list.filter(x =>   
-        x.name.toLowerCase().includes(search) ||   
-        x.tracking.toLowerCase().includes(search) ||  
-        (x.phone && x.phone.includes(search))  
+      filtered = standardizedList.filter(x =>   
+        (x.tracking && x.tracking.toLowerCase().includes(search)) ||  
+        x.clients.some(c => (c.name && c.name.toLowerCase().includes(search)) || (c.phone && c.phone.includes(search)))
       );  
     }  
   
-    if(!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:30px; font-size: 13px;">لا يوجد شحنات مسجلة حالياً</p>'; return; }  
+    if(!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:30px; font-size: 13px;">لا يوجد شحنات مطابقة للبحث حالياً</p>'; return; }  
   
     container.innerHTML = filtered.map(s => {  
       const isRec = s.status === 'received';  
-      const clientPhone = s.phone ? s.phone : 'لا يوجد رقم';  
+      const hasMultiple = s.clients.length > 1;
+
+      const totalRoundWeight = s.clients.reduce((acc, c) => acc + (c.roundWeight || 0), 0);
+      const totalCost = s.clients.reduce((acc, c) => acc + (c.cost || 0), 0);
+
+      let clientsHtml = '';
+      if(hasMultiple) {
+        clientsHtml += `<span class="multi-clients-badge">🛒 كرطونة مشتركة (${s.clients.length} زبائن)</span>`;
+      }
+      
+      s.clients.forEach(c => {
+        clientsHtml += `
+          <div class="client-item-row">
+            <div>
+              <span class="client-title" style="font-size:13px;">${c.name}</span> <br>
+              <a href="tel:${c.phone}" class="client-phone-link">📞 ${c.phone || 'بدون هاتف'}</a>
+            </div>
+            ${c.cost ? `<span style="color:#34d399; font-size:12px; font-weight:bold;">${c.cost.toLocaleString()} دج (${c.roundWeight} كغ)</span>` : `<span style="color:#cbd5e1; font-size:11px;">قيد الحساب</span>`}
+          </div>
+        `;
+      });
+
       return `  
         <div class="m-shipment-card">  
           <div class="m-card-top-info">  
             <div class="client-info-box">  
-              <span class="client-title">${s.name}</span>  
-              <a href="tel:${clientPhone}" class="client-phone-link">📞 ${clientPhone}</a>  
+              ${clientsHtml}
             </div>  
             <span class="pill ${isRec ? 'pill-received' : 'pill-transit'}">${isRec ? '✅ مستلم بالمقر' : '✈️ في الطريق'}</span>  
           </div>  
           <div class="m-card-details">  
-            <div class="det-row"><span class="det-label">رقم التتبع</span><span class="det-val" style="color:#38bdf8;">${s.tracking}</span></div>  
-            <div class="det-row"><span class="det-label">الشركة / النوع</span><span class="det-val">${s.service} (${s.goodsType || 'غير محدد'})</span></div>  
-            <div class="det-row"><span class="det-label">الوزن المفوتر</span><span class="det-val">${s.roundWeight ? s.roundWeight + ' كغ' : 'قيد القياس'}</span></div>  
-            <div class="det-row"><span class="det-label">الحساب الإجمالي</span><span class="det-val" style="color:#34d399;">${s.cost ? s.cost.toLocaleString() + ' دج' : 'قيد الاحتساب'}</span></div>  
+            <div class="det-row"><span class="det-label">رقم التتبع</span><span class="det-val" style="color:#38bdf8;">${s.tracking || '---'}</span></div>  
+            <div class="det-row"><span class="det-label">الشركة / النوع</span><span class="det-val">${s.service || 'أخرى'} (${s.goodsType || 'غير محدد'})</span></div>  
+            <div class="det-row"><span class="det-label">إجمالي الفوترة</span><span class="det-val">${totalRoundWeight > 0 ? totalRoundWeight + ' كغ' : 'قيد القياس'}</span></div>  
+            <div class="det-row"><span class="det-label">الحساب الكلي</span><span class="det-val" style="color:#34d399;">${totalCost > 0 ? totalCost.toLocaleString() + ' دج' : 'قيد الاحتساب'}</span></div>  
           </div>  
           <div class="m-card-actions">  
-            ${!isRec ? `<button class="sm-btn sm-btn-green" onclick="openReceiveSheet('${s.id}')">🛬 استلام ووزن</button>` : `<button class="sm-btn sm-btn-print" onclick="printReceipt('${s.id}')">🖨️ وصل الفاتورة</button>`}  
-            <button class="sm-btn sm-btn-grey" style="flex:unset; width:44px;" onclick="printReceipt('${s.id}')">📄</button>  
-            <button class="sm-btn sm-btn-red" onclick="deleteItem('${s.id}')">🗑️</button>  
+            ${!isRec ? `<button class="sm-btn sm-btn-green" onclick="openReceiveSheet('${s.id}')">🛬 استلام ووزن المشترك</button>` : ''}  
+            <button class="sm-btn sm-btn-red" onclick="deleteItem('${s.id}')">🗑️ حذف</button>  
           </div>  
         </div>  
       `;  
     }).join('');  
   };  
   
-  // التحكم بالنافذة المنبثقة من الأسفل لاستلام الأوزان وتحديد الكلفة  
   window.openReceiveSheet = function(id) {  
     document.getElementById('modal-id').value = id;  
-    document.getElementById('dz-price').value = 6000; /* القيمة الافتراضية الجديدة للمقر بقيمة 6000 دج */  
-    document.getElementById('dz-net').value = '';  
-    document.getElementById('dz-extra').value = 0;  
-    document.getElementById('modal-total').textContent = '0 دج';  
+    const item = list.find(x => x.id === id);
+    
+    // تأمين جلب قائمة الزبائن حتى للبيانات القديمة
+    const itemClients = (item.clients && Array.isArray(item.clients)) ? item.clients : [{ name: item.name || 'زبون', phone: item.phone || '' }];
+    const container = document.getElementById('modal-clients-weights-container');
+    
+    container.innerHTML = itemClients.map((c, idx) => `
+      <div style="background: rgba(0,0,0,0.2); padding: 14px; border-radius: 12px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.05);">
+        <h4 style="color: var(--accent-blue); margin-bottom: 10px; font-size:14px;">👤 زبون: ${c.name}</h4>
+        <div class="input-group"><label>⚖️ الوزن الصافي (كغ)</label><input type="number" step="0.01" class="dz-net-field" data-index="${idx}" oninput="calcModalTotal()" required></div>  
+        <div class="input-group"><label>💵 السعر للكيلو (دج)</label><input type="number" class="dz-price-field" data-index="${idx}" value="6000" oninput="calcModalTotal()"></div>  
+        <div class="input-group"><label>➕ تكاليف إضافية (جمركة / شحن)</label><input type="number" class="dz-extra-field" data-index="${idx}" value="0" oninput="calcModalTotal()"></div>  
+        <div style="text-align: left; font-size: 12px; color: #34d399; font-weight: bold;">الحساب الخاص بالزبون: <span class="client-calc-total" id="individual-total-${idx}">0 دج</span></div>
+      </div>
+    `).join('');
+
     document.getElementById('receive-sheet').classList.add('open');  
   };  
   
   window.closeSheet = function() { document.getElementById('receive-sheet').classList.remove('open'); };  
   
   window.calcModalTotal = function() {  
-    const net = parseFloat(document.getElementById('dz-net').value) || 0;  
-    const price = parseFloat(document.getElementById('dz-price').value) || 0;  
-    const extra = parseFloat(document.getElementById('dz-extra').value) || 0;  
-    const round = Math.ceil(net);  
-    document.getElementById('modal-total').textContent = (round * price + extra).toLocaleString() + ' دج';  
+    const netFields = document.querySelectorAll('.dz-net-field');
+    const priceFields = document.querySelectorAll('.dz-price-field');
+    const extraFields = document.querySelectorAll('.dz-extra-field');
+
+    netFields.forEach((field, idx) => {
+      const net = parseFloat(field.value) || 0;
+      const price = parseFloat(priceFields[idx].value) || 0;
+      const extra = parseFloat(extraFields[idx].value) || 0;
+      const round = Math.ceil(net);
+      
+      const total = (round * price) + extra;
+      document.getElementById(`individual-total-${idx}`).textContent = total.toLocaleString() + ' دج';
+    });
   };  
   
   window.submitReceiveData = async function() {  
     const id = document.getElementById('modal-id').value;  
-    const net = parseFloat(document.getElementById('dz-net').value) || 0;  
-    const price = parseFloat(document.getElementById('dz-price').value) || 0;  
-    const extra = parseFloat(document.getElementById('dz-extra').value) || 0;  
-    if(net <= 0) { alert('الرجاء إدخال وزن صحيح!'); return; }  
-    const round = Math.ceil(net);  
-    const cost = round * price + extra;  
+    const item = list.find(x => x.id === id);
+    const itemClients = (item.clients && Array.isArray(item.clients)) ? item.clients : [{ name: item.name || 'زبون', phone: item.phone || '' }];
+
+    const netFields = document.querySelectorAll('.dz-net-field');
+    const priceFields = document.querySelectorAll('.dz-price-field');
+    const extraFields = document.querySelectorAll('.dz-extra-field');
+
+    let updatedClients = [...itemClients];
+    let validation = true;
+
+    netFields.forEach((field, idx) => {
+      const net = parseFloat(field.value) || 0;
+      const price = parseFloat(priceFields[idx].value) || 0;
+      const extra = parseFloat(extraFields[idx].value) || 0;
+      
+      if(net <= 0) { validation = false; }
+      
+      const round = Math.ceil(net);
+      const cost = (round * price) + extra;
+
+      if(!updatedClients[idx]) updatedClients[idx] = {};
+      updatedClients[idx].netWeight = net;
+      updatedClients[idx].roundWeight = round;
+      updatedClients[idx].pricePerKg = price;
+      updatedClients[idx].extraCost = extra;
+      updatedClients[idx].cost = cost;
+    });
+
+    if(!validation) { alert('الرجاء إدخال أوزان صحيحة لجميع الزبائن!'); return; }  
   
     await updateDoc(doc(db, "shipments", id), {  
-      status: 'received', netWeight: net, roundWeight: round, pricePerKg: price, extraCost: extra, cost, arrival: new Date().toLocaleDateString()  
+      status: 'received', 
+      clients: updatedClients,
+      arrival: new Date().toLocaleDateString()  
     });  
     closeSheet();  
   };  
@@ -578,29 +683,41 @@ body {
     if(confirm('هل تود حذف هذا الطرد نهائياً من السحابة؟')) await deleteDoc(doc(db, "shipments", id));  
   };  
   
-  // توليد كشف الطباعة الفوري للزبون  
-  window.printReceipt = function(id) {  
-    const item = list.find(x => x.id === id);  
-    document.getElementById('p-name').textContent = item.name;  
-    document.getElementById('p-phone').textContent = item.phone;  
-    document.getElementById('p-track').textContent = item.tracking;  
-    document.getElementById('p-net').textContent = item.netWeight + ' كغ (وزن الفوترة بعد التقريب: ' + item.roundWeight + ' كغ)';  
-    document.getElementById('p-total').textContent = item.cost ? item.cost.toLocaleString() + ' دج' : '0 دج';  
-    window.print();  
-  };  
-  
-  // تحديث أرقام لوحة الإحصائيات والكروت العلوية تلقائياً  
   function updateStats() {  
-    const rec = list.filter(x => x.status === 'received');  
-    document.getElementById('stat-all').textContent = list.length;  
-    document.getElementById('stat-rec').textContent = rec.length;  
-    document.getElementById('stat-transit').textContent = list.length - rec.length;  
-    document.getElementById('stat-net').textContent = rec.reduce((a, b) => a + (b.netWeight || 0), 0).toFixed(1) + ' كغ';  
-    document.getElementById('stat-round').textContent = rec.reduce((a, b) => a + (b.roundWeight || 0), 0) + ' كغ';  
-    document.getElementById('stat-money').textContent = rec.reduce((a, b) => a + (b.cost || 0), 0).toLocaleString() + ' دج';  
+    let totalAll = list.length;
+    let totalRec = 0;
+    let totalTransit = 0;
+    let totalNetWeight = 0;
+    let totalRoundWeight = 0;
+    let totalMoney = 0;
+
+    list.forEach(s => {
+      if(s.status === 'received') {
+        totalRec++;
+        if (s.clients && Array.isArray(s.clients)) {
+          s.clients.forEach(c => {
+            totalNetWeight += (c.netWeight || 0);
+            totalRoundWeight += (c.roundWeight || 0);
+            totalMoney += (c.cost || 0);
+          });
+        } else {
+          totalNetWeight += (s.netWeight || 0);
+          totalRoundWeight += (s.roundWeight || 0);
+          totalMoney += (s.cost || 0);
+        }
+      } else {
+        totalTransit++;
+      }
+    });
+
+    document.getElementById('stat-all').textContent = totalAll;  
+    document.getElementById('stat-rec').textContent = totalRec;  
+    document.getElementById('stat-transit').textContent = totalTransit;  
+    document.getElementById('stat-net').textContent = totalNetWeight.toFixed(1) + ' كغ';  
+    document.getElementById('stat-round').textContent = totalRoundWeight + ' كغ';  
+    document.getElementById('stat-money').textContent = totalMoney.toLocaleString() + ' دج';  
   }  
   
-  // دالات حاسبة الوزن السريعة وتطبيق القيم الافتراضية  
   window.applyPreset = function(val, btn) {  
     document.getElementById('calc-p').value = val;  
     document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('selected'));  
